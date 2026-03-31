@@ -205,6 +205,117 @@ Product Name: Standard PC (Q35 + ICH9, 2009)</screen>
       for more information.
     </para>
   </sect1>
+  <sect1 xml:id="sec-libvirt-config-boot-menu-virsh">
+    <title>Changing boot options</title>
+
+    <para>
+      The boot menu of the &vmguest; can be found in the <tag>os</tag> element
+      and looks similar to this example:
+    </para>
+
+<screen>&lt;os&gt;
+  &lt;type&gt;hvm&lt;/type&gt;
+  &lt;loader&gt;readonly='yes' secure='no' type='rom'/&gt;/usr/lib/xen/boot/hvmloader&lt;/loader&gt;
+  &lt;nvram template='/usr/share/OVMF/OVMF_VARS.fd'/&gt;/var/lib/libvirt/nvram/guest_VARS.fd&lt;/nvram&gt;
+  &lt;boot dev='hd'/&gt;
+  &lt;boot dev='cdrom'/&gt;
+  &lt;bootmenu enable='yes' timeout='3000'/&gt;
+  &lt;smbios mode='sysinfo'/&gt;
+  &lt;bios useserial='yes' rebootTimeout='0'/&gt;
+  &lt;/os&gt;</screen>
+
+    <para>
+      In this example, two devices are available,
+      <tag class="attvalue">hd</tag> and <tag class="attvalue">cdrom</tag> .
+      The configuration also reflects the actual boot order, so the
+      <tag class="attvalue">hd</tag> comes before the
+      <tag class="attvalue">cdrom</tag> .
+    </para>
+
+    <sect2 xml:id="sec-libvirt-config-bootorder-virsh">
+      <title>Changing boot order</title>
+      <para>
+        The &vmguest;'s boot order is represented through the order of devices
+        in the XML configuration file. As the devices are interchangeable, it
+        is possible to change the boot order of the &vmguest;.
+      </para>
+      <procedure>
+        <step>
+          <para>
+            Open the &vmguest;'s XML configuration.
+          </para>
+<screen>&prompt.sudo;<command>virsh edit sles15</command></screen>
+        </step>
+        <step>
+          <para>
+            Change the sequence of the bootable devices.
+          </para>
+<screen>
+...
+&lt;boot dev='cdrom'/&gt;
+&lt;boot dev='hd'/&gt;
+...
+      </screen>
+        </step>
+        <step>
+          <para>
+            Check if the boot order was changed successfully by looking at the
+            boot menu in the BIOS of the &vmguest;.
+          </para>
+        </step>
+      </procedure>
+    </sect2>
+
+    <sect2 xml:id="sec-libvirt-config-directkernel-virsh">
+      <title>Using direct kernel boot</title>
+      <para>
+        Direct Kernel Boot allows you to boot from a kernel and initrd stored
+        on the host. Set the path to both files in the <tag>kernel</tag> and
+        <tag>initrd</tag> elements:
+      </para>
+<screen>&lt;os&gt;
+    ...
+  &lt;kernel&gt;/root/f8-i386-vmlinuz&lt;/kernel&gt;
+  &lt;initrd&gt;/root/f8-i386-initrd&lt;/initrd&gt;
+    ...
+&lt;os&gt;</screen>
+      <para>
+        To enable Direct Kernel Boot:
+      </para>
+      <procedure>
+        <step>
+          <para>
+            Open the &vmguest;'s XML configuration:
+          </para>
+<screen>&prompt.sudo;<command>virsh edit sles15</command></screen>
+        </step>
+        <step>
+          <para>
+            Inside the <tag>os</tag> element, add a <tag>kernel</tag> element
+            and the path to the kernel file on the host:
+          </para>
+<screen>...
+&lt;kernel&gt;/root/f8-i386-vmlinuz&lt;/kernel&gt;
+...</screen>
+        </step>
+        <step>
+          <para>
+            Add an <tag>initrd</tag> element and the path to the initrd file on
+            the host:
+          </para>
+<screen>...
+&lt;initrd&gt;/root/f8-i386-initrd&lt;/initrd&gt;
+...</screen>
+        </step>
+        <step>
+          <para>
+            Start your VM to boot from the new kernel:
+          </para>
+<screen>&prompt.sudo;<command>virsh start sles15</command></screen>
+        </step>
+      </procedure>
+    </sect2>
+  </sect1>
   <sect1 xml:id="libvirt-cpu-virsh">
     <title>Configuring CPU</title>
 
@@ -390,117 +501,6 @@ current      live           4
         the <citetitle>CPU model and topology</citetitle> documentation at
         <link xlink:href="https://libvirt.org/formatdomain.html#cpu-model-and-topology"/>.
       </para>
-    </sect2>
-  </sect1>
-  <sect1 xml:id="sec-libvirt-config-boot-menu-virsh">
-    <title>Changing boot options</title>
-
-    <para>
-      The boot menu of the &vmguest; can be found in the <tag>os</tag> element
-      and looks similar to this example:
-    </para>
-
-<screen>&lt;os&gt;
-  &lt;type&gt;hvm&lt;/type&gt;
-  &lt;loader&gt;readonly='yes' secure='no' type='rom'/&gt;/usr/lib/xen/boot/hvmloader&lt;/loader&gt;
-  &lt;nvram template='/usr/share/OVMF/OVMF_VARS.fd'/&gt;/var/lib/libvirt/nvram/guest_VARS.fd&lt;/nvram&gt;
-  &lt;boot dev='hd'/&gt;
-  &lt;boot dev='cdrom'/&gt;
-  &lt;bootmenu enable='yes' timeout='3000'/&gt;
-  &lt;smbios mode='sysinfo'/&gt;
-  &lt;bios useserial='yes' rebootTimeout='0'/&gt;
-  &lt;/os&gt;</screen>
-
-    <para>
-      In this example, two devices are available,
-      <tag class="attvalue">hd</tag> and <tag class="attvalue">cdrom</tag> .
-      The configuration also reflects the actual boot order, so the
-      <tag class="attvalue">hd</tag> comes before the
-      <tag class="attvalue">cdrom</tag> .
-    </para>
-
-    <sect2 xml:id="sec-libvirt-config-bootorder-virsh">
-      <title>Changing boot order</title>
-      <para>
-        The &vmguest;'s boot order is represented through the order of devices
-        in the XML configuration file. As the devices are interchangeable, it
-        is possible to change the boot order of the &vmguest;.
-      </para>
-      <procedure>
-        <step>
-          <para>
-            Open the &vmguest;'s XML configuration.
-          </para>
-<screen>&prompt.sudo;<command>virsh edit sles15</command></screen>
-        </step>
-        <step>
-          <para>
-            Change the sequence of the bootable devices.
-          </para>
-<screen>
-...
-&lt;boot dev='cdrom'/&gt;
-&lt;boot dev='hd'/&gt;
-...
-      </screen>
-        </step>
-        <step>
-          <para>
-            Check if the boot order was changed successfully by looking at the
-            boot menu in the BIOS of the &vmguest;.
-          </para>
-        </step>
-      </procedure>
-    </sect2>
-
-    <sect2 xml:id="sec-libvirt-config-directkernel-virsh">
-      <title>Using direct kernel boot</title>
-      <para>
-        Direct Kernel Boot allows you to boot from a kernel and initrd stored
-        on the host. Set the path to both files in the <tag>kernel</tag> and
-        <tag>initrd</tag> elements:
-      </para>
-<screen>&lt;os&gt;
-    ...
-  &lt;kernel&gt;/root/f8-i386-vmlinuz&lt;/kernel&gt;
-  &lt;initrd&gt;/root/f8-i386-initrd&lt;/initrd&gt;
-    ...
-&lt;os&gt;</screen>
-      <para>
-        To enable Direct Kernel Boot:
-      </para>
-      <procedure>
-        <step>
-          <para>
-            Open the &vmguest;'s XML configuration:
-          </para>
-<screen>&prompt.sudo;<command>virsh edit sles15</command></screen>
-        </step>
-        <step>
-          <para>
-            Inside the <tag>os</tag> element, add a <tag>kernel</tag> element
-            and the path to the kernel file on the host:
-          </para>
-<screen>...
-&lt;kernel&gt;/root/f8-i386-vmlinuz&lt;/kernel&gt;
-...</screen>
-        </step>
-        <step>
-          <para>
-            Add an <tag>initrd</tag> element and the path to the initrd file on
-            the host:
-          </para>
-<screen>...
-&lt;initrd&gt;/root/f8-i386-initrd&lt;/initrd&gt;
-...</screen>
-        </step>
-        <step>
-          <para>
-            Start your VM to boot from the new kernel:
-          </para>
-<screen>&prompt.sudo;<command>virsh start sles15</command></screen>
-        </step>
-      </procedure>
     </sect2>
   </sect1>
   <sect1 xml:id="sec-libvirt-config-memory-virsh">
