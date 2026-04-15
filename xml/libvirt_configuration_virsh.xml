@@ -225,11 +225,9 @@ Product Name: Standard PC (Q35 + ICH9, 2009)</screen>
   &lt;/os&gt;</screen>
 
     <para>
-      In this example, two devices are available,
-      <tag class="attvalue">hd</tag> and <tag class="attvalue">cdrom</tag> .
-      The configuration also reflects the actual boot order, so the
-      <tag class="attvalue">hd</tag> comes before the
-      <tag class="attvalue">cdrom</tag> .
+      In this example, two devices are available: <tag class="attvalue">hd</tag> and <tag
+      class="attvalue">cdrom</tag>. The configuration also reflects the actual boot order, so the
+      <tag class="attvalue">hd</tag> comes before the <tag class="attvalue">cdrom</tag>.
     </para>
 
     <sect2 xml:id="sec-libvirt-config-bootorder-virsh">
@@ -269,7 +267,7 @@ Product Name: Standard PC (Q35 + ICH9, 2009)</screen>
     <sect2 xml:id="sec-libvirt-config-directkernel-virsh">
       <title>Using direct kernel boot</title>
       <para>
-        Direct Kernel Boot allows you to boot from a kernel and initrd stored
+        Direct kernel boot allows you to boot from a kernel and initrd stored
         on the host. Set the path to both files in the <tag>kernel</tag> and
         <tag>initrd</tag> elements:
       </para>
@@ -280,7 +278,7 @@ Product Name: Standard PC (Q35 + ICH9, 2009)</screen>
     ...
 &lt;os&gt;</screen>
       <para>
-        To enable Direct Kernel Boot:
+        To enable direct kernel boot:
       </para>
       <procedure>
         <step>
@@ -622,13 +620,11 @@ Used memory:    8388608 KiB
     </para>
 
     <sect2 xml:id="sec-libvirt-config-hugepages-virsh">
-      <title>Hugepages</title>
+      <title>Huge pages</title>
       <para>
-        Using hugepages from the &vmhost; to back memory allocations for the
-        &vmguest; can improve performance for many workloads. The following
-        procedure shows how to back &vmguest; memory with hugepages. The
-        &vmguest; should be shutoff or restarted after changing the
-        configuration.
+        Using huge pages from the &vmhost; to back memory allocations for the &vmguest; can improve
+        performance for many workloads. The following procedure shows how to back &vmguest; memory
+        with huge pages. The &vmguest; should be shut off or restarted after changing the configuration.
       </para>
       <procedure>
         <step>
@@ -664,7 +660,7 @@ Used memory:    8388608 KiB
       <para>
         When deploying large VMs on large physical NUMA systems, one challenge
         is ensuring the &vmguest; CPU and memory resources are not randomly
-        spread across the &vmhost;'s NUMA nodes, otherwise performance may
+        spread across the &vmhost;'s NUMA nodes; otherwise, performance may
         suffer. All resources should be close to each other with respect to
         NUMA distance. To ensure best performance, the &vmguest;'s CPU and
         memory allocations should fit on a single &vmhost; NUMA node.
